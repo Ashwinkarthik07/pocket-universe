@@ -5,706 +5,213 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pocket Universe — Cosmic Sandbox</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* ─── Base Reset & Tokens ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:        #050810;
-      --card:      #0a0e1a;
-      --border:    #1a2035;
-      --muted:     #111827;
-      --mfg:       #4b5563;
-      --fg:        #e2e8f0;
-      --fgdim:     #94a3b8;
-      --cyan:      #00e5ff;
-      --gold:      #ffc107;
-      --pink:      #e040fb;
-      --purple:    #7c3aed;
-      --green:     #22c55e;
-      --red:       #ef4444;
+      --bg: #050810; --card: #0a0e1a; --border: #1a2035; --muted: #111827;
+      --mfg: #4b5563; --fg: #e2e8f0; --fgdim: #94a3b8; --cyan: #00e5ff;
+      --gold: #ffc107; --pink: #e040fb; --purple: #7c3aed; --green: #22c55e; --red: #ef4444;
     }
-
     html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 2px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.3); }
-
-    /* ─── Starfield ─── */
     .starfield {
       background-image:
-        radial-gradient(1.5px 1.5px at  8%  12%, rgba(255,255,255,.7), transparent),
-        radial-gradient(1px   1px   at 22%  67%, rgba(255,255,255,.4), transparent),
-        radial-gradient(1px   1px   at 38%   5%, rgba(255,255,255,.6), transparent),
-        radial-gradient(2px   2px   at 53%  45%, rgba(255,255,255,.3), transparent),
-        radial-gradient(1.5px 1.5px at 61%  83%, rgba(255,255,255,.5), transparent),
-        radial-gradient(1px   1px   at 74%  27%, rgba(255,255,255,.6), transparent),
-        radial-gradient(1px   1px   at 82%  58%, rgba(255,255,255,.4), transparent),
-        radial-gradient(1.5px 1.5px at 91%  14%, rgba(255,255,255,.7), transparent),
-        radial-gradient(1px   1px   at 17%  39%, rgba(255,255,255,.5), transparent),
-        radial-gradient(1px   1px   at 44%  72%, rgba(255,255,255,.3), transparent),
-        radial-gradient(1px   1px   at 67%   8%, rgba(255,255,255,.6), transparent),
-        radial-gradient(1.5px 1.5px at  3%  88%, rgba(255,255,255,.4), transparent),
-        radial-gradient(1px   1px   at 29%  53%, rgba(255,255,255,.5), transparent),
-        radial-gradient(1px   1px   at 78%  91%, rgba(255,255,255,.3), transparent),
-        radial-gradient(1px   1px   at 96%  46%, rgba(255,255,255,.6), transparent);
+        radial-gradient(1.5px 1.5px at 8% 12%, rgba(255,255,255,.7), transparent),
+        radial-gradient(1px 1px at 22% 67%, rgba(255,255,255,.4), transparent),
+        radial-gradient(2px 2px at 53% 45%, rgba(255,255,255,.3), transparent),
+        radial-gradient(1.5px 1.5px at 91% 14%, rgba(255,255,255,.7), transparent);
     }
-
-    /* ─── Glow Helpers ─── */
-    .glow-cyan   { box-shadow: 0 0 14px 3px rgba(0,229,255,.4),  0 0 40px 8px  rgba(0,229,255,.12);  }
-    .glow-gold   { box-shadow: 0 0 20px 5px rgba(255,193,7,.5),  0 0 60px 15px rgba(255,193,7,.18);  }
-    .glow-pink   { box-shadow: 0 0 14px 3px rgba(224,64,251,.4), 0 0 40px 8px  rgba(224,64,251,.12); }
-    .glow-purple { box-shadow: 0 0 14px 3px rgba(124,58,237,.4), 0 0 40px 8px  rgba(124,58,237,.12); }
-    .glow-green  { box-shadow: 0 0 14px 3px rgba(34,197,94,.5),  0 0 40px 8px  rgba(34,197,94,.15);  }
-    .glow-red    { box-shadow: 0 0 14px 3px rgba(239,68,68,.5),  0 0 40px 8px  rgba(239,68,68,.15);  }
-    .text-glow-cyan { text-shadow: 0 0 10px rgba(0,229,255,.8); }
-
-    /* ─── Animations ─── */
-    @keyframes float    { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-5px)} }
-    @keyframes pulseGlow{ 0%,100%{opacity:.5} 50%{opacity:1} }
-    @keyframes spin      { to{transform:rotate(360deg)} }
-    @keyframes slideIn  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-    .anim-float      { animation: float      3s ease-in-out infinite; }
-    .anim-pulseGlow  { animation: pulseGlow  2s ease-in-out infinite; }
-    .anim-spin       { animation: spin       1s linear infinite; }
-    .anim-slideIn    { animation: slideIn  .25s ease-out both; }
-
-    /* ─── Custom Slider ─── */
-    input[type=range] {
-      -webkit-appearance: none; width: 100%; height: 4px;
-      background: #1e293b;
-      border-radius: 2px; outline: none; cursor: pointer;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 14px; height: 14px;
-      border-radius: 50%; background: var(--cyan);
-      box-shadow: 0 0 8px 2px rgba(0,229,255,.5); cursor: pointer;
-    }
-    input[type=range].gold::-webkit-slider-thumb { background: var(--gold); box-shadow: 0 0 8px 2px rgba(255,193,7,.5); }
-    input[type=range].pink::-webkit-slider-thumb { background: var(--pink); box-shadow: 0 0 8px 2px rgba(224,64,251,.5); }
-
-    /* ─── Layout ─── */
-    #app { display:flex; flex-direction:column; height:100vh; }
-    #desktop-layout { display:flex; flex:1; min-height:0; }
-    #left-sidebar, #right-sidebar {
-      width: 280px; flex-shrink: 0; display:flex; flex-direction:column;
-      background: rgba(10,14,26,.85); backdrop-filter: blur(12px);
-      border-color: var(--border);
-    }
-    #left-sidebar  { border-right: 1px solid var(--border); }
-    #right-sidebar { border-left:  1px solid var(--border); }
-    #canvas-wrap   { flex:1; position:relative; overflow:hidden; }
-    #orbital-canvas{ width:100%; height:100%; display:block; }
-
-    /* ─── Sidebar pieces ─── */
-    .sidebar-header { padding:14px 16px; border-bottom:1px solid var(--border); flex-shrink:0; }
-    .sidebar-scroll { flex:1; overflow-y:auto; padding:12px; }
-    .sidebar-footer { padding:10px 16px; border-top:1px solid var(--border); flex-shrink:0; }
-
-    /* ─── Mode toggle ─── */
-    #mode-toggle { position:relative; display:flex; align-items:center; width:100%; border-radius:10px; overflow:hidden; border:1px solid var(--border); height:40px; cursor:pointer; }
-    #mode-toggle .thumb {
-      position:absolute; top:2px; bottom:2px; width:calc(50% - 3px);
-      border-radius:8px; transition:transform .4s cubic-bezier(.4,0,.2,1), background .4s;
-    }
-    #mode-toggle .thumb.explorer  { transform:translateX(2px);              background:linear-gradient(135deg,#0891b2,#2563eb); box-shadow:0 0 15px rgba(0,229,255,.25); }
-    #mode-toggle .thumb.researcher{ transform:translateX(calc(100% + 2px)); background:linear-gradient(135deg,#7c3aed,#db2777); box-shadow:0 0 15px rgba(124,58,237,.3);  }
-    #mode-toggle .half { flex:1; display:flex; align-items:center; justify-content:center; gap:4px; z-index:1; font-family:'Orbitron',sans-serif; font-size:9px; font-weight:700; letter-spacing:.15em; transition:color .3s; }
-
-    /* ─── Tab bar ─── */
-    .tab-bar  { display:flex; gap:2px; background:rgba(255,255,255,.04); border-radius:8px; padding:2px; }
-    .tab-btn  { flex:1; padding:5px 0; border-radius:6px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px; font-family:'Orbitron',sans-serif; font-size:9px; font-weight:700; letter-spacing:.1em; color:var(--mfg); transition:all .2s; }
-    .tab-btn.active { background:var(--card); color:var(--cyan); box-shadow:0 1px 4px rgba(0,0,0,.4); }
-
-    /* ─── Catalog items ─── */
-    .planet-item { width:100%; display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:8px; border:1px solid transparent; cursor:pointer; background:transparent; text-align:left; transition:all .2s; }
-    .planet-item:hover  { background:rgba(255,255,255,.04); }
-    .planet-item.active { background:rgba(0,229,255,.07); border-color:rgba(0,229,255,.25); }
-    .planet-dot  { width:18px; height:18px; border-radius:50%; flex-shrink:0; transition:box-shadow .3s; }
-    .planet-item.active .planet-dot { box-shadow:0 0 10px 2px rgba(0,229,255,.35); }
-    .planet-name { font-size:12px; font-weight:500; color:var(--fg); }
-    .planet-type { font-size:10px; color:var(--fgdim); }
-
-    /* ─── Creator ─── */
-    .form-label  { display:block; font-size:10px; color:var(--mfg); text-transform:uppercase; letter-spacing:.15em; margin-bottom:4px; }
-    .form-input  { width:100%; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:8px; padding:7px 10px; color:var(--fg); font-size:12px; outline:none; transition:border-color .2s; }
-    .form-input:focus { border-color:rgba(0,229,255,.4); }
-    .form-select { width:100%; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:8px; padding:7px 10px; color:var(--fg); font-size:12px; outline:none; cursor:pointer; }
-    .form-select option { background:#0f1523; }
-
-    .btn-launch {
-      width:100%; padding:9px; border-radius:8px; border:none; cursor:pointer;
-      font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em;
-      display:flex; align-items:center; justify-content:center; gap:6px; transition:all .3s;
-      background:linear-gradient(135deg,#0891b2,#2563eb); color:#fff;
-      box-shadow:0 0 18px rgba(0,229,255,.25);
-    }
-    .btn-launch:hover { box-shadow:0 0 28px rgba(0,229,255,.45); transform:translateY(-1px); }
-    .btn-launch:disabled { background:#1e293b; color:var(--mfg); box-shadow:none; transform:none; cursor:not-allowed; }
-    .btn-launch.launched { background:rgba(34,197,94,.15); color:#22c55e; border:1px solid rgba(34,197,94,.3); box-shadow:0 0 18px rgba(34,197,94,.25); }
-
-    /* ─── Codex ─── */
-    .stat-grid  { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .stat-card  { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:8px; padding:10px; }
-    .stat-label { font-size:9px; color:var(--mfg); text-transform:uppercase; letter-spacing:.15em; }
-    .stat-val   { font-size:12px; font-weight:600; color:var(--fg); margin-top:2px; }
-    .data-table { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
-    .data-row   { display:flex; justify-content:space-between; align-items:center; padding:7px 12px; }
-    .data-row:not(:last-child) { border-bottom:1px solid var(--border); }
-    .data-key   { font-size:10px; color:var(--fgdim); }
-    .data-val   { font-size:11px; font-family:monospace; color:var(--cyan); }
-
-    /* ─── Sandbox sliders ─── */
-    .sandbox-box { background:rgba(124,58,237,.07); border:1px solid rgba(124,58,237,.2); border-radius:10px; padding:12px; }
-    .ctrl-row    { margin-bottom:12px; }
-    .ctrl-row:last-child { margin-bottom:0; }
-    .ctrl-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
-    .ctrl-name   { font-size:10px; color:rgba(255,255,255,.7); display:flex; align-items:center; gap:5px; }
-    .ctrl-val    { font-size:10px; font-family:monospace; color:var(--cyan); }
-    .live-grid   { display:grid; grid-template-columns:1fr 1fr; gap:6px; background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:8px; padding:10px; }
-    .live-item span:first-child { font-size:10px; color:var(--fgdim); }
-    .live-item span:last-child  { font-size:10px; font-family:monospace; color:var(--cyan); margin-left:4px; }
-
-    /* ─── Quiz ─── */
-    .quiz-opt {
-      width:100%; text-align:left; padding:9px 12px; border-radius:8px; border:1px solid var(--border);
-      background:rgba(255,255,255,.03); color:rgba(255,255,255,.8); font-size:12px; cursor:pointer;
-      display:flex; align-items:center; gap:8px; transition:all .25s;
-    }
-    .quiz-opt:hover:not(:disabled) { border-color:rgba(0,229,255,.35); background:rgba(0,229,255,.06); }
-    .quiz-opt.correct { background:rgba(34,197,94,.1);  border-color:rgba(34,197,94,.4);  box-shadow:0 0 14px rgba(34,197,94,.3);  }
-    .quiz-opt.wrong   { background:rgba(239,68,68,.1);  border-color:rgba(239,68,68,.4);  box-shadow:0 0 14px rgba(239,68,68,.3);  }
-    .quiz-opt.dimmed  { opacity:.4; }
-    .quiz-badge { width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--fgdim); flex-shrink:0; }
-    .progress-bar-track { height:4px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden; }
-    .progress-bar-fill  { height:100%; border-radius:2px; transition:width .5s ease; }
-
-    /* ─── Canvas controls ─── */
-    .canvas-ctrl { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:6px; }
-    .c-btn {
-      padding:7px; border-radius:8px; background:rgba(10,14,26,.8); backdrop-filter:blur(8px);
-      border:1px solid var(--border); cursor:pointer; color:var(--fgdim); transition:all .2s; display:flex;
-    }
-    .c-btn:hover { border-color:rgba(0,229,255,.3); color:var(--cyan); }
-    .c-label { padding:5px 10px; border-radius:8px; background:rgba(10,14,26,.8); backdrop-filter:blur(8px); border:1px solid var(--border); font-size:10px; font-family:monospace; color:var(--fgdim); }
-
-    /* ─── Mobile Fallbacks ─── */
-    #mobile-header { display:none; }
-    #mobile-nav    { display:none; }
-    #mobile-panels { display:none; flex:1; overflow-y:auto; }
-
-    @media (max-width: 1023px) {
-      #desktop-layout { display:none; }
-      #mobile-header  { display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(10,14,26,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); flex-shrink:0; }
-      #mobile-nav      { display:flex; align-items:center; justify-content:space-around; padding:6px 4px; background:rgba(10,14,26,.95); backdrop-filter:blur(10px); border-top:1px solid var(--border); flex-shrink:0; }
-      #mobile-panels  { display:flex; }
-      .mob-nav-btn    { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; background:transparent; border:none; cursor:pointer; color:var(--mfg); font-family:'Orbitron',sans-serif; font-size:8px; font-weight:700; letter-spacing:.08em; transition:color .2s; }
-      .mob-nav-btn.active { color:var(--cyan); }
-      #mob-canvas-panel { width:100%; height:100%; }
-      .mob-panel { padding:16px; display:none; width:100%; }
-      .mob-panel.active { display:block; }
-    }
-
-    .section-head { font-size:9px; font-family:'Orbitron',sans-serif; font-weight:700; letter-spacing:.2em; color:var(--mfg); text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:5px; }
-    .fact-card { background:rgba(0,229,255,.05); border:1px solid rgba(0,229,255,.15); border-radius:8px; padding:10px 12px; display:flex; gap:8px; align-items:flex-start; }
-    .fact-card p { font-size:11px; color:rgba(255,255,255,.75); line-height:1.5; }
+    .glow-cyan { box-shadow: 0 0 14px 3px rgba(0,229,255,.4); }
+    #app { display: flex; flex-direction: column; height: 100vh; }
+    #desktop-layout { display: flex; flex: 1; min-height: 0; }
+    #left-sidebar, #right-sidebar { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; background: rgba(10,14,26,.85); backdrop-filter: blur(12px); border-color: var(--border); }
+    #left-sidebar { border-right: 1px solid var(--border); }
+    #right-sidebar { border-left: 1px solid var(--border); }
+    #canvas-wrap { flex: 1; position: relative; overflow: hidden; }
+    #orbital-canvas { width: 100%; height: 100%; display: block; background: #050810; }
+    .sidebar-header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .sidebar-scroll { flex: 1; overflow-y: auto; padding: 12px; }
+    .sidebar-footer { padding: 10px 16px; border-top: 1px solid var(--border); text-align: center; }
+    .section-head { font-size: 10px; font-family: 'Orbitron', sans-serif; font-weight: 700; color: var(--cyan); letter-spacing: .1em; margin-bottom: 10px; }
+    .planet-item { width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 6px; cursor: pointer; text-align: left; color: var(--fg); transition: background 0.2s; }
+    .planet-item:hover { background: rgba(255,255,255,0.05); }
+    .planet-item.active { background: rgba(0,229,255,0.1); border: 1px solid var(--cyan); }
+    .planet-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .canvas-ctrl { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+    .c-btn { padding: 8px 12px; border-radius: 6px; background: rgba(10,14,26,.9); border: 1px solid var(--border); color: white; cursor: pointer; }
+    .c-btn:hover { border-color: var(--cyan); }
+    .c-label { padding: 8px 12px; background: rgba(10,14,26,.9); border: 1px solid var(--border); font-size: 11px; border-radius: 6px; }
+    .stat-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-bottom: 8px; }
+    .stat-label { font-size: 9px; color: var(--mfg); text-transform: uppercase; }
+    .stat-val { font-size: 13px; font-weight: 600; color: white; }
   </style>
 </head>
 <body class="starfield">
 <div id="app">
-
   <div id="desktop-layout">
     <aside id="left-sidebar">
       <div class="sidebar-header">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#06b6d4,#7c3aed);display:flex;align-items:center;justify-content:center;" class="glow-cyan">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
-              <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-30 12 12)"/>
-              <circle cx="12" cy="12" r="2" fill="#fff" stroke="none"/>
-            </svg>
-          </div>
-          <div>
-            <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;color:var(--fg)">Pocket Universe</div>
-            <div style="font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:.2em;color:var(--mfg);text-transform:uppercase">Cosmic Sandbox</div>
-          </div>
-        </div>
+        <h1 style="font-family:'Orbitron',sans-serif; font-size:16px; color:white; font-weight:700;">Pocket Universe</h1>
+        <p style="font-size:9px; color:var(--cyan);">SYSTEM ACTIVE</p>
       </div>
-
-      <div class="sidebar-scroll" style="display:flex;flex-direction:column;gap:12px;">
-        <div>
-          <div id="mode-toggle" onclick="toggleMode()">
-            <div class="thumb explorer" id="mode-thumb"></div>
-            <div class="half" id="mode-left" style="color:#fff">EXPLORER</div>
-            <div class="half" id="mode-right" style="color:var(--mfg)">RESEARCHER</div>
-          </div>
-        </div>
-
-        <div class="tab-bar">
-          <button class="tab-btn active" id="tab-catalog" onclick="switchTab('catalog')">Catalog</button>
-          <button class="tab-btn" id="tab-creator" onclick="switchTab('creator')">Create</button>
-          <button class="tab-btn" id="tab-quiz" onclick="switchTab('quiz')">Quiz</button>
-        </div>
-
-        <div id="panel-catalog">
-          <div class="section-head">Celestial Bodies</div>
-          <div id="planet-list" style="display:flex;flex-direction:column;gap:2px;"></div>
-        </div>
-
-        <div id="panel-creator" style="display:none">
-          <div class="section-head">Planet Factory</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div>
-              <label class="form-label">Planet Name</label>
-              <input id="new-name" class="form-input" type="text" placeholder="Name your world…" oninput="updatePreview()" />
-            </div>
-            <div>
-              <label class="form-label">Surface Aesthetic</label>
-              <select id="new-preset" class="form-select" onchange="updatePreview()">
-                <option value="radial-gradient(circle at 35% 35%, #f5d8a0, #c9a060, #8a6830)">Gas Giant</option>
-                <option value="radial-gradient(circle at 35% 35%, #8fbc8f, #5a8a5a, #3a6a3a)">Terrestrial Crust</option>
-                <option value="radial-gradient(circle at 35% 35%, #ff6a40, #c13a10, #801800)">Volcanic Melt</option>
-                <option value="radial-gradient(circle at 35% 35%, #c0f0ff, #70c0e0, #3090c0)">Glacial Ice</option>
-              </select>
-            </div>
-            <div style="display:flex;justify-content:center;padding:5px 0;">
-              <div id="creator-preview" style="width:40px;height:40px;border-radius:50%;background:var(--cyan);box-shadow:0 0 20px rgba(0,229,255,0.3)"></div>
-            </div>
-            <div>
-              <label class="form-label">Orbit Distance: <span id="new-orbit-val" class="text-cyan-400">180px</span></label>
-              <input type="range" id="new-orbit" min="60" max="320" value="180" oninput="document.getElementById('new-orbit-val').textContent=this.value+'px'" />
-            </div>
-            <div>
-              <label class="form-label">Mass Parameter: <span id="new-mass-val" class="text-cyan-400">1.0 M⊕</span></label>
-              <input type="range" id="new-mass" min="0.2" max="4.0" step="0.1" value="1.0" oninput="document.getElementById('new-mass-val').textContent=this.value+' M⊕';updatePreview()" />
-            </div>
-            <button id="launch-btn" class="btn-launch" onclick="launchPlanet()" disabled>Launch Planet</button>
-          </div>
-        </div>
-
-        <div id="panel-quiz" style="display:none">
-          <div id="quiz-container"></div>
-        </div>
+      <div class="sidebar-scroll">
+        <div class="section-head">CELESTIAL BODIES</div>
+        <div id="planet-list"></div>
       </div>
-      <div class="sidebar-footer"><p style="font-size:8px;color:rgba(255,255,255,.2);text-align:center;font-family:'Orbitron',sans-serif;">ACADEMIC EDITION</p></div>
+      <div class="sidebar-footer"><p style="font-size:9px; color:var(--mfg)">SANDBOX EMULATOR</p></div>
     </aside>
 
     <main id="canvas-wrap">
       <canvas id="orbital-canvas"></canvas>
       <div class="canvas-ctrl">
-        <button class="c-btn" id="pause-btn" onclick="togglePause()">Pause</button>
-        <button class="c-btn" onclick="adjustZoom(0.1)">Zoom +</button>
-        <button class="c-btn" onclick="adjustZoom(-0.1)">Zoom -</button>
+        <button class="c-btn" onclick="togglePause()">Pause/Play</button>
+        <button class="c-btn" onclick="adjustZoom(0.1)">+</button>
+        <button class="c-btn" onclick="adjustZoom(-0.1)">-</button>
         <div class="c-label" id="zoom-label">100%</div>
       </div>
     </main>
 
     <aside id="right-sidebar">
       <div class="sidebar-header">
-        <span style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--fg)">COSMIC CODEX</span>
-        <div id="sandbox-badge" style="display:none;font-size:8px;color:var(--pink);margin-top:2px;">SANDBOX SYSTEM MODE</div>
+        <h2 style="font-family:'Orbitron',sans-serif; font-size:12px; color:white;">COSMIC CODEX</h2>
       </div>
-      <div class="sidebar-scroll" id="codex-body"></div>
+      <div class="sidebar-scroll" id="codex-body">
+        <div class="stat-card">
+          <div class="stat-label">Selected Target</div>
+          <div class="stat-val" id="codex-name">Sun</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Mass Parameter</div>
+          <div class="stat-val" id="codex-mass">333,000 M⊕</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Orbital Velocity</div>
+          <div class="stat-val" id="codex-vel">0.00 km/s</div>
+        </div>
+      </div>
     </aside>
-  </div>
-
-  <div id="mobile-header">
-    <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:white">Pocket Universe Mobile</div>
-  </div>
-  <div id="mobile-panels" class="p-6 text-center text-gray-400 flex flex-col justify-center items-center">
-    <p>For the best orbital simulation workspace, sandbox operations, and complex calculus models, please access this application on a desktop environment.</p>
   </div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-    DYNAMIC SIMULATOR LOGIC ENGINE
-═══════════════════════════════════════════════════════════════════ */
-let currentMode = 'explorer'; // explorer | researcher
-let activeTab = 'catalog';
-let selectedBodyId = 'earth';
-let isPaused = false;
-let zoomLevel = 1.0;
-let timeAngle = 0;
+  // ─── INITIALIZATION & STATE ───
+  const canvas = document.getElementById('orbital-canvas');
+  const ctx = canvas.getContext('2d');
+  
+  let zoom = 1.0;
+  let isPaused = false;
+  let selectedPlanetIndex = 0;
 
-let cosmicBodies = [
-  { id:'mercury', name:'Mercury', orbitRadius:65,  velocity:3.2, mass:0.06, size:6,  color:'#a0a0a0', gradient:'radial-gradient(circle at 35% 35%, #c0c0c0, #606060)', gravity:3.7,  atmosphere:'None', type:'Terrestrial', funFact:'Mercury is the smallest planet and closest to the Sun. Its year is only 88 Earth days long.', distanceAU:0.39, moons:0, temperature:'167°C', classification:'Inner Planet', isCustom:false },
-  { id:'venus',   name:'Venus',   orbitRadius:95,  velocity:2.4, mass:0.82, size:11, color:'#e8a735', gradient:'radial-gradient(circle at 35% 35%, #f5d070, #c47a1a)', gravity:8.87, atmosphere:'Dense CO₂', type:'Terrestrial', funFact:'Venus spins backwards on its axis compared to most other planets in our planetary disk.', distanceAU:0.72, moons:0, temperature:'464°C', classification:'Inner Planet', isCustom:false },
-  { id:'earth',   name:'Earth',   orbitRadius:135, velocity:1.8, mass:1.00, size:12, color:'#2563eb', gradient:'radial-gradient(circle at 35% 35%, #3b82f6, #1d4ed8)', gravity:9.81, atmosphere:'N₂, O₂, Ar', type:'Terrestrial', funFact:'Our home planet is the only known celestial body harbor universe container hosting complex biomes.', distanceAU:1.00, moons:1, temperature:'15°C', classification:'Goldilocks Zone', isCustom:false },
-  { id:'mars',    name:'Mars',    orbitRadius:175, velocity:1.4, mass:0.11, size:9,  color:'#ef4444', gradient:'radial-gradient(circle at 35% 35%, #f87171, #b91c1c)', gravity:3.71, atmosphere:'Thin CO₂', type:'Terrestrial', funFact:'Mars hosts Olympus Mons, the tallest mountain-volcano in our solar system structure.', distanceAU:1.52, moons:2, temperature:'-62°C', classification:'Outer Rocky', isCustom:false },
-  { id:'jupiter', name:'Jupiter', orbitRadius:230, velocity:0.9, mass:317.8, size:22, color:'#f59e0b', gradient:'radial-gradient(circle at 35% 35%, #fbbf24, #d97706)', gravity:24.79, atmosphere:'H₂, He Gas', type:'Gas Giant', funFact:'Jupiter possesses a massive magnetic field and its Great Red Spot is a persistent hurricane wider than Earth.', distanceAU:5.20, moons:95, temperature:'-108°C', classification:'Jovian Giant', isCustom:false }
-];
+  // Safe baseline solar system configuration
+  const planets = [
+    { name: "Sun", distance: 0, radius: 18, color: "#ffcc00", mass: "333,000 M⊕", velocity: "0.00", angle: 0, speed: 0 },
+    { name: "Mercury", distance: 45, radius: 4, color: "#9e9e9e", mass: "0.055 M⊕", velocity: "47.4", angle: Math.random() * 360, speed: 0.03 },
+    { name: "Venus", distance: 75, radius: 6, color: "#e3bb76", mass: "0.815 M⊕", velocity: "35.0", angle: Math.random() * 360, speed: 0.02 },
+    { name: "Earth", distance: 110, radius: 7, color: "#4ba3e3", mass: "1.000 M⊕", velocity: "29.8", angle: Math.random() * 360, speed: 0.015 },
+    { name: "Mars", distance: 150, radius: 5, color: "#e35b36", mass: "0.107 M⊕", velocity: "24.1", angle: Math.random() * 360, speed: 0.012 },
+    { name: "Jupiter", distance: 210, radius: 12, color: "#cca37a", mass: "317.8 M⊕", velocity: "13.1", angle: Math.random() * 360, speed: 0.007 }
+  ];
 
-const quizQuestions = {
-  explorer: [
-    { q: "Which planet is closest to the Sun?", o: ["Venus", "Mercury", "Mars", "Earth"], a: 1 },
-    { q: "What makes Mars appear red?", o: ["Lava oceans", "Iron oxide (Rust)", "Red vegetation", "Atmospheric gas"], a: 1 },
-    { q: "Which is the largest planet in our solar system?", o: ["Saturn", "Jupiter", "Neptune", "Earth"], a: 1 }
-  ],
-  researcher: [
-    { q: "What is the primary gas composition of Venus's atmosphere?", o: ["Nitrogen", "Carbon Dioxide", "Methane", "Hydrogen"], a: 1 },
-    { q: "According to Kepler's Third Law, the square of the orbital period ($T^2$) is directly proportional to what?", o: ["The planet's mass", "The cube of the semi-major axis ($a^3$)", "The surface gravity", "The orbital eccentricity"], a: 1 },
-    { q: "Which celestial body features the highest surface gravity environment?", o: ["Earth", "Mars", "Jupiter", "Venus"], a: 2 }
-  ]
-};
+  // ─── RESIZING FIX ───
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  }
 
-let currentQuizIdx = 0;
-let quizScore = 0;
-let quizAnswered = false;
-
-// ─── INITIALIZATION ───
-window.onload = function() {
-  initCanvas();
-  renderPlanetList();
-  renderCodex();
-  updatePreview();
-  renderQuiz();
-  
-  window.addEventListener('resize', initCanvas);
-};
-
-// ─── CANVAS RENDER ENGINE ───
-let canvas, ctx;
-function initCanvas() {
-  canvas = document.getElementById('orbital-canvas');
-  if(!canvas) return;
-  ctx = canvas.getContext('2d');
-  
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
-  ctx.scale(dpr, dpr);
-}
-
-function drawUniverse() {
-  if(!canvas || !ctx) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  const cx = canvas.width / (2 * (window.devicePixelRatio || 1));
-  const cy = canvas.height / (2 * (window.devicePixelRatio || 1));
-  
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(zoomLevel, zoomLevel);
-  
-  // Draw Solar Core (Sun)
-  let sunGlow = ctx.createRadialGradient(0, 0, 0, 0, 0, 24);
-  sunGlow.addColorStop(0, '#fffdf0');
-  sunGlow.addColorStop(0.2, '#ffea70');
-  sunGlow.addColorStop(1, 'transparent');
-  ctx.fillStyle = sunGlow;
-  ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI*2); ctx.fill();
-  
-  ctx.fillStyle = '#ffc107';
-  ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI*2); ctx.fill();
-  
-  // Draw Orbit Lines & Celestial Bodies
-  cosmicBodies.forEach(body => {
-    // Draw Orbit Path Ring
-    ctx.beginPath();
-    ctx.arc(0, 0, body.orbitRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = selectedBodyId === body.id ? 'rgba(0, 229, 255, 0.25)' : 'rgba(26, 32, 53, 0.4)';
-    ctx.lineWidth = selectedBodyId === body.id ? 1.5 : 1;
-    ctx.stroke();
+  // ─── SIMULATION PHYSICS LOOP ───
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Compute current position coordinates via angular translation
-    let angle = timeAngle * (body.velocity * 0.15);
-    let bx = body.orbitRadius * Math.cos(angle * Math.PI / 180);
-    let by = body.orbitRadius * Math.sin(angle * Math.PI / 180);
-    
-    // Save live coordinates for clicking/interaction detection logic if needed
-    body.currentX = bx + cx;
-    body.currentY = by + cy;
-    
-    // Draw Celestial Body
-    ctx.fillStyle = body.color;
-    ctx.beginPath();
-    ctx.arc(bx, by, body.size, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Visual indicators for selection
-    if(selectedBodyId === body.id) {
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.8)';
+    const centerX = canvas.width / (2 * window.devicePixelRatio);
+    const centerY = canvas.height / (2 * window.devicePixelRatio);
+
+    // Render orbits and planets
+    planets.forEach((planet, index) => {
+      if (planet.distance > 0) {
+        // Draw orbital trail
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, planet.distance * zoom, 0, Math.PI * 2);
+        ctx.strokeStyle = index === selectedPlanetIndex ? "rgba(0, 229, 255, 0.25)" : "rgba(26, 32, 53, 0.4)";
+        ctx.lineWidth = index === selectedPlanetIndex ? 1.5 : 1;
+        ctx.stroke();
+
+        // Update physics positions if not paused
+        if (!isPaused) {
+          planet.angle += planet.speed;
+        }
+      }
+
+      // Calculate relative coordinate structures
+      const rad = (planet.angle * Math.PI) / 180;
+      const planetX = centerX + Math.cos(rad) * planet.distance * zoom;
+      const planetY = centerY + Math.sin(rad) * planet.distance * zoom;
+
+      // Draw Planet Glow Aura
+      if (index === selectedPlanetIndex) {
+        ctx.beginPath();
+        ctx.arc(planetX, planetY, (planet.radius + 6) * zoom, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0, 229, 255, 0.15)";
+        ctx.fill();
+      }
+
+      // Draw Base Planet body
       ctx.beginPath();
-      ctx.arc(bx, by, body.size + 4, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-  });
-  
-  ctx.restore();
-  
-  if(!isPaused) {
-    timeAngle += 0.25;
+      ctx.arc(planetX, planetY, planet.radius * zoom, 0, Math.PI * 2);
+      ctx.fillStyle = planet.color;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(animate);
   }
-  requestAnimationFrame(drawUniverse);
-}
-requestAnimationFrame(drawUniverse);
 
-// ─── INTERACTIVITY ACTIONS ───
-function toggleMode() {
-  const thumb = document.getElementById('mode-thumb');
-  const leftTxt = document.getElementById('mode-left');
-  const rightTxt = document.getElementById('mode-right');
-  const badge = document.getElementById('sandbox-badge');
-  
-  if(currentMode === 'explorer') {
-    currentMode = 'researcher';
-    thumb.className = "thumb researcher";
-    leftTxt.style.color = "var(--mfg)";
-    rightTxt.style.color = "#fff";
-    badge.style.display = "block";
-  } else {
-    currentMode = 'explorer';
-    thumb.className = "thumb explorer";
-    leftTxt.style.color = "#fff";
-    rightTxt.style.color = "var(--mfg)";
-    badge.style.display = "none";
+  // ─── INTERACTION CONTROLS ───
+  function buildSidebarList() {
+    const container = document.getElementById('planet-list');
+    container.innerHTML = "";
+    planets.forEach((planet, i) => {
+      const item = document.createElement('button');
+      item.className = `planet-item ${i === selectedPlanetIndex ? 'active' : ''}`;
+      item.onclick = () => selectPlanet(i);
+      item.innerHTML = `
+        <div class="planet-dot" style="background:${planet.color}"></div>
+        <div class="planet-name">${planet.name}</div>
+      `;
+      container.appendChild(item);
+    });
   }
-  renderCodex();
-  renderQuiz();
-}
 
-function switchTab(tab) {
-  activeTab = tab;
-  document.getElementById('tab-catalog').className = tab === 'catalog' ? "tab-btn active" : "tab-btn";
-  document.getElementById('tab-creator').className = tab === 'creator' ? "tab-btn active" : "tab-btn";
-  document.getElementById('tab-quiz').className = tab === 'quiz' ? "tab-btn active" : "tab-btn";
-  
-  document.getElementById('panel-catalog').style.display = tab === 'catalog' ? 'block' : 'none';
-  document.getElementById('panel-creator').style.display = tab === 'creator' ? 'block' : 'none';
-  document.getElementById('panel-quiz').style.display = tab === 'quiz' ? 'block' : 'none';
-}
-
-function selectBody(id) {
-  selectedBodyId = id;
-  renderPlanetList();
-  renderCodex();
-}
-
-function togglePause() {
-  isPaused = !isPaused;
-  document.getElementById('pause-btn').textContent = isPaused ? "Play" : "Pause";
-}
-
-function adjustZoom(amount) {
-  zoomLevel = Math.max(0.5, Math.min(2.0, zoomLevel + amount));
-  document.getElementById('zoom-label').textContent = Math.round(zoomLevel * 100) + "%";
-}
-
-// ─── DATA UI RENDERING ───
-function renderPlanetList() {
-  const container = document.getElementById('planet-list');
-  container.innerHTML = '';
-  cosmicBodies.forEach(b => {
-    let activeClass = b.id === selectedBodyId ? 'active' : '';
-    container.innerHTML += `
-      <button class="planet-item ${activeClass}" onclick="selectBody('${b.id}')">
-        <div class="planet-dot" style="background:${b.gradient || b.color}"></div>
-        <div>
-          <div class="planet-name">${b.name}</div>
-          <div class="planet-type">${b.type} ${b.isCustom ? '(Custom)' : ''}</div>
-        </div>
-      </button>
-    `;
-  });
-}
-
-function renderCodex() {
-  const container = document.getElementById('codex-body');
-  const body = cosmicBodies.find(b => b.id === selectedBodyId);
-  if(!body) return;
-  
-  if(currentMode === 'explorer') {
-    container.innerHTML = `
-      <div class="anim-slideIn">
-        <h3 class="text-xl font-bold text-white tracking-wide font-['Orbitron'] mb-1">${body.name}</h3>
-        <p class="text-xs text-cyan-400 font-medium mb-4">${body.classification || 'System Node'}</p>
-        
-        <div class="fact-card mb-4">
-          <p>${body.funFact}</p>
-        </div>
-        
-        <div class="stat-grid">
-          <div class="stat-card"><div class="stat-label">Mass Metrics</div><div class="stat-val">${body.mass} M⊕</div></div>
-          <div class="stat-card"><div class="stat-label">Moons Tracker</div><div class="stat-val">${body.moons}</div></div>
-          <div class="stat-card"><div class="stat-label">Median Temp</div><div class="stat-val">${body.temperature}</div></div>
-          <div class="stat-card"><div class="stat-label">Radial Space</div><div class="stat-val">${body.distanceAU} AU</div></div>
-        </div>
-      </div>
-    `;
-  } else {
-    // Advanced Researcher Mode Data Array & Active Custom Sandbox Sliders
-    container.innerHTML = `
-      <div class="anim-slideIn space-y-4">
-        <div>
-          <h3 class="text-lg font-bold text-purple-400 font-['Orbitron']">${body.name} — Research</h3>
-          <p class="text-[10px] text-gray-500 tracking-wider">MATHEMATICAL PHYSICS MODEL</p>
-        </div>
-        
-        <div class="sandbox-box">
-          <p class="text-[10px] font-bold text-purple-300 font-['Orbitron'] mb-3">SANDBOX PARAMETERS</p>
-          <div class="ctrl-row">
-            <div class="ctrl-header"><span class="ctrl-name">Orbital Velocity</span><span class="ctrl-val" id="slide-vel-val">${body.velocity}</span></div>
-            <input type="range" min="0.0" max="6.0" step="0.1" value="${body.velocity}" oninput="updatePhysics('velocity', this.value)" />
-          </div>
-          <div class="ctrl-row">
-            <div class="ctrl-header"><span class="ctrl-name">Radius Vector</span><span class="ctrl-val" id="slide-rad-val">${body.orbitRadius}px</span></div>
-            <input type="range" min="50" max="350" value="${body.orbitRadius}" oninput="updatePhysics('radius', this.value)" />
-          </div>
-        </div>
-
-        <div class="data-table">
-          <div class="data-row"><span class="data-key">Gravitational Acceleration</span><span class="data-val">${body.gravity} m/s²</span></div>
-          <div class="data-row"><span class="data-key">Atmospheric Baseline</span><span class="data-val">${body.atmosphere}</span></div>
-          <div class="data-row"><span class="data-key">Structural Matrix</span><span class="data-val">${body.type} World</span></div>
-        </div>
-      </div>
-    `;
+  function selectPlanet(index) {
+    selectedPlanetIndex = index;
+    const target = planets[index];
+    document.getElementById('codex-name').textContent = target.name;
+    document.getElementById('codex-mass').textContent = target.mass;
+    document.getElementById('codex-vel').textContent = target.name === "Sun" ? "0.00 km/s" : `${target.velocity} km/s`;
+    buildSidebarList();
   }
-}
 
-function updatePhysics(parameter, val) {
-  const body = cosmicBodies.find(b => b.id === selectedBodyId);
-  if(!body) return;
-  if(parameter === 'velocity') {
-    body.velocity = parseFloat(val);
-    document.getElementById('slide-vel-val').textContent = val;
-  } else if(parameter === 'radius') {
-    body.orbitRadius = parseInt(val);
-    document.getElementById('slide-rad-val').textContent = val + "px";
+  function togglePause() {
+    isPaused = !isPaused;
   }
-}
 
-// ─── PLANET CREATION FACTORY ENGINE ───
-function updatePreview() {
-  const name = document.getElementById('new-name').value;
-  const gradient = document.getElementById('new-preset').value;
-  const mass = parseFloat(document.getElementById('new-mass').value);
-  
-  const preview = document.getElementById('creator-preview');
-  preview.style.background = gradient;
-  preview.style.transform = `scale(${0.7 + (mass * 0.15)})`;
-  
-  document.getElementById('launch-btn').disabled = name.trim().length === 0;
-}
-
-function launchPlanet() {
-  const nameInput = document.getElementById('new-name');
-  const preset = document.getElementById('new-preset');
-  const orbit = parseInt(document.getElementById('new-orbit').value);
-  const mass = parseFloat(document.getElementById('new-mass').value);
-  
-  const newId = 'custom_' + Date.now();
-  const newPlanet = {
-    id: newId,
-    name: nameInput.value,
-    orbitRadius: orbit,
-    velocity: parseFloat((1.5 / Math.sqrt(orbit / 100)).toFixed(2)), // Newtonian approximation
-    mass: mass,
-    size: Math.round(8 + (mass * 2.5)),
-    color: '#a78bfa',
-    gradient: preset.value,
-    gravity: parseFloat((9.8 * mass).toFixed(2)),
-    atmosphere: 'Synthetic Layer',
-    type: 'Custom Synthesis',
-    funFact: 'A newly formulated universe element created directly within this workspace platform.',
-    distanceAU: parseFloat((orbit / 135).toFixed(2)),
-    moons: 0,
-    temperature: 'Variable Baseline',
-    classification: 'Artificial Prototype',
-    isCustom: true
-  };
-  
-  cosmicBodies.push(newPlanet);
-  nameInput.value = '';
-  
-  renderPlanetList();
-  selectBody(newId);
-  switchTab('catalog');
-}
-
-// ─── GAMIFIED ADAPTIVE EVALUATION ENGINE ───
-function renderQuiz() {
-  const container = document.getElementById('quiz-container');
-  const pool = quizQuestions[currentMode];
-  
-  if(currentQuizIdx >= pool.length) {
-    container.innerHTML = `
-      <div class="text-center py-6 anim-slideIn">
-        <h4 class="font-['Orbitron'] font-bold text-white mb-2">Evaluation Complete</h4>
-        <p class="text-xs text-gray-400 mb-4">You scored <span class="text-cyan-400 font-bold font-mono">${quizScore}/${pool.length}</span></p>
-        <button class="btn-launch" onclick="resetQuiz()">Restart Quiz</button>
-      </div>
-    `;
-    return;
+  function adjustZoom(amount) {
+    zoom = Math.max(0.4, Math.min(2.5, zoom + amount));
+    document.getElementById('zoom-label').textContent = Math.round(zoom * 100) + "%";
   }
-  
-  const qItem = pool[currentQuizIdx];
-  let optionsHtml = '';
-  qItem.o.forEach((opt, idx) => {
-    optionsHtml += `
-      <button class="quiz-opt" id="q-opt-${idx}" onclick="handleQuizAnswer(${idx})">
-        <div class="quiz-badge">${String.fromCharCode(65 + idx)}</div>
-        <span>${opt}</span>
-      </button>
-    `;
-  });
-  
-  container.innerHTML = `
-    <div class="anim-slideIn space-y-4">
-      <div class="flex justify-between items-center text-[10px] text-gray-500 font-['Orbitron']">
-        <span>QUIZ METRIC</span>
-        <span>${currentQuizIdx + 1}/${pool.length}</span>
-      </div>
-      <div class="progress-bar-track">
-        <div class="progress-bar-fill bg-cyan-400" style="width:${((currentQuizIdx)/pool.length)*100}%"></div>
-      </div>
-      <p class="text-xs font-medium text-white pt-2 leading-relaxed">${qItem.q}</p>
-      <div class="space-y-2 pt-2">${optionsHtml}</div>
-      <button id="quiz-next-btn" class="btn-launch" style="display:none; margin-top:12px;" onclick="nextQuizQuestion()">Next Question</button>
-    </div>
-  `;
-  quizAnswered = false;
-}
 
-function handleQuizAnswer(selectedIdx) {
-  if(quizAnswered) return;
-  quizAnswered = true;
+  // ─── SYSTEM STARTUP ───
+  window.addEventListener('resize', resizeCanvas);
   
-  const pool = quizQuestions[currentMode];
-  const correctIdx = pool[currentQuizIdx].a;
-  
-  if(selectedIdx === correctIdx) {
-    document.getElementById(`q-opt-${selectedIdx}`).classList.add('correct');
-    quizScore++;
-  } else {
-    document.getElementById(`q-opt-${selectedIdx}`).classList.add('wrong');
-    document.getElementById(`q-opt-${correctIdx}`).classList.add('correct');
-  }
-  
-  // Dim non-selected items
-  for(let i=0; i<pool[currentQuizIdx].o.length; i++) {
-    if(i !== selectedIdx && i !== correctIdx) {
-      document.getElementById(`q-opt-${i}`).classList.add('dimmed');
-    }
-  }
-  
-  document.getElementById('quiz-next-btn').style.display = 'flex';
-}
-
-function nextQuizQuestion() {
-  currentQuizIdx++;
-  renderQuiz();
-}
-
-function resetQuiz() {
-  currentQuizIdx = 0;
-  quizScore = 0;
-  renderQuiz();
-}
+  // Quick timeout yields processing time to guarantee layouts have set sizes before calculation
+  setTimeout(() => {
+    resizeCanvas();
+    buildSidebarList();
+    selectPlanet(0);
+    animate();
+  }, 100);
 </script>
 </body>
 </html>
